@@ -1,0 +1,26 @@
+version: '3'
+services:
+    gohelloworld:
+        image: dockergk:golang-hello
+        ports:
+            - 18080:8080
+        deploy:
+            mode: replicated
+            replicas: 2
+            labels: [APP=GO-HELLO]
+            update_config:
+                parallelism: 1
+                delay: 10s
+            restart_policy:
+                condition: on-failure
+
+    visualizer:
+        image: dockersamples/visualizer:stable
+        ports:
+            - "8080:8080"
+        stop_grace_period: 1m30s
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        deploy:
+            placement:
+                constraints: [node.role == manager]
